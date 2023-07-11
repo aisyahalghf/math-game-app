@@ -13,7 +13,7 @@ const QuestionPage = () => {
     op: "",
     answer: 0,
   });
-  const [answer, setAnswer] = useState(0);
+  const [answer, setAnswer] = useState(null);
   const [answers, setAnswers] = useState([]);
   const [isCorrectAnswer, setIsCorrectsAnswer] = useState({
     isCorrect: "",
@@ -72,7 +72,7 @@ const QuestionPage = () => {
       setAnswers([...answers, false]);
       setIsCorrectsAnswer({ isCorrect: false, rightAnswer: question.answer });
     }
-    setAnswer(0);
+    setAnswer("");
   };
 
   const generateLevel = () => {
@@ -106,8 +106,8 @@ const QuestionPage = () => {
       <Navbar score={score} level={level} generateLevel={generateLevel} />
       <section className="relative ">
         <BackgroundPage />
-        <div className="relative container mx-auto text-[#D9D9D9] flex justify-center  items-center h-screen ">
-          <div className=" border-2 shadow shadow-slate-200 py-10 px-5 md:px-20 bg-transparent rounded-lg flex flex-col gap-10 w-full md:w-[500px] xl:w-[700px]   ">
+        <div className="relative container mx-auto text-[#D9D9D9] flex justify-center  items-start pt-28 md:pt-0 md:items-center h-screen ">
+          <div className=" border-2 shadow shadow-slate-200 py-10 px-5 md:px-20 bg-transparent rounded-lg flex flex-col gap-10 w-full md:w-[500px] xl:w-[700px] mx-3 md:mx-0   ">
             <h1 className=" text-2xl ">
               {answers.length + 1} of {MAX_QUESTION} Questions.
             </h1>
