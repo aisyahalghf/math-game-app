@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import BackgroundPage from "../componen/BackgroundPage";
 import Navbar from "../componen/Navbar";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import generateQuestion from "../componen/GenerateQuestions";
 const MAX_QUESTION = 10;
-const operands = ["+", "-", "x", ":"];
 
 const QuestionPage = () => {
   const [question, setQuestion] = useState({
@@ -21,47 +20,8 @@ const QuestionPage = () => {
     rightAnswer: "",
   });
   const [score, setScore] = useState(0);
+  const [level, setLevel] = useState(10);
   const navigate = useNavigate();
-
-  // const generateQuestion = useCallback(() => {
-  //   let numb1 = Math.round(Math.random() * 10);
-  //   let numb2 = Math.round(Math.random() * 10);
-  //   const op = Math.round(Math.random() * 3);
-  //   let result = 0;
-
-  //   switch (operands[op]) {
-  //     case "+":
-  //       result = numb1 + numb2;
-  //       break;
-  //     case "-":
-  //       if (numb1 < numb2) {
-  //         let temp = numb1;
-  //         numb1 = numb2;
-  //         numb2 = temp;
-  //       }
-  //       result = numb1 - numb2;
-  //       break;
-  //     case "x":
-  //       result = numb1 * numb2;
-  //       break;
-  //     case ":":
-  //       result = numb1 / numb2;
-  //       do {
-  //         numb1 = Math.round(Math.random() * 10);
-  //         numb2 = Math.round(Math.random() * 10);
-  //         result = numb1 / numb2;
-  //       } while (Math.abs(Math.floor(result)) !== result || numb2 === 0);
-
-  //       break;
-  //   }
-
-  //   setQuestion({
-  //     numb1,
-  //     numb2,
-  //     op: operands[op],
-  //     answer: result,
-  //   });
-  // }, []);
 
   useEffect(() => {
     const userScore = answers.filter((val) => val === true);
@@ -87,15 +47,18 @@ const QuestionPage = () => {
         }
       });
     } else {
-      let result = generateQuestion();
-      setQuestion({
-        numb1: result.numb1,
-        numb2: result.numb2,
-        op: result.op,
-        answer: result.answer,
-      });
+      if (level > 0) {
+        let result = generateQuestion(level);
+        setQuestion({
+          numb1: result.numb1,
+          numb2: result.numb2,
+          op: result.op,
+          answer: result.answer,
+        });
+      }
     }
-  }, [answers.length, MAX_QUESTION, question.answer]);
+    // eslint-disable-next-line
+  }, [answers.length, MAX_QUESTION, question.answer, level]);
 
   const handleAnswerQuestion = (e) => {
     setAnswer(Number(e.target.value));
@@ -112,16 +75,42 @@ const QuestionPage = () => {
     setAnswer(0);
   };
 
+  const generateLevel = () => {
+    Swal.fire({
+      title: "Choose your level for your experiance",
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonColor: "#B48d75",
+      denyButtonColor: "#558776",
+      cancelButtonColor: "#173B3A",
+      cancelButtonText: "Easy",
+      confirmButtonText: "Hard",
+      denyButtonText: "Medium",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setLevel(40);
+      } else if (result.isDenied) {
+        setLevel(30);
+      } else if (result.isDismissed) {
+        setLevel(10);
+      }
+    });
+  };
+
+  useEffect(() => {
+    generateLevel();
+  }, []);
+
   return (
     <div className=" h-screen md:h-screen">
-      <Navbar score={score} />
+      <Navbar score={score} level={level} generateLevel={generateLevel} />
       <section className="relative ">
         <BackgroundPage />
         <div className="relative container mx-auto text-[#D9D9D9] flex justify-center  items-center h-screen ">
           <div className=" border-2 shadow shadow-slate-200 py-10 px-5 md:px-20 bg-transparent rounded-lg flex flex-col gap-10 w-full md:w-[500px] xl:w-[700px]   ">
-            <div className=" text-2xl ">
+            <h1 className=" text-2xl ">
               {answers.length + 1} of {MAX_QUESTION} Questions.
-            </div>
+            </h1>
             <p className=" text-3xl font-bold ">
               Please answers this question :
             </p>
