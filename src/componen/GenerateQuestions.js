@@ -7,7 +7,7 @@ const generateQuestions = (level) => {
     lev = 10;
   } else if (level === "medium") {
     lev = 30;
-  } else if (lev === "hard") {
+  } else if (level === "hard") {
     lev = 40;
   }
   let numb1 = Math.round(Math.random() * lev);

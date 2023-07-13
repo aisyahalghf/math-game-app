@@ -78,7 +78,13 @@ const QuestionPage = ({ dataUser }) => {
       setIsCorrectsAnswer({ isCorrect: true });
     } else {
       setAnswers([...answers, false]);
-      setIsCorrectsAnswer({ isCorrect: false, rightAnswer: question.answer });
+      setIsCorrectsAnswer({
+        isCorrect: false,
+        rightAnswer: question.answer,
+        numb1: question.numb1,
+        numb2: question.numb2,
+        op: question.op,
+      });
     }
     setAnswer("");
   };
@@ -97,10 +103,16 @@ const QuestionPage = ({ dataUser }) => {
     }).then((result) => {
       if (result.isConfirmed) {
         setLevel("hard");
+        setAnswers([]);
+        setIsCorrectsAnswer({});
       } else if (result.isDenied) {
         setLevel("medium");
+        setAnswers([]);
+        setIsCorrectsAnswer({});
       } else if (result.isDismissed) {
         setLevel("easy");
+        setAnswers([]);
+        setIsCorrectsAnswer({});
       }
     });
   };
@@ -156,7 +168,7 @@ const QuestionPage = ({ dataUser }) => {
                 <p className="   text-red-400 ">
                   Your answers is incorrect <br />
                 </p>
-                <p className="text-green-200">{`The correct answers is ${isCorrectAnswer.rightAnswer}`}</p>
+                <p className="text-green-200">{`The correct answers for ${isCorrectAnswer.numb1} ${isCorrectAnswer.op} ${isCorrectAnswer.numb2} is ${isCorrectAnswer.rightAnswer}`}</p>
               </div>
             ) : null}
           </div>

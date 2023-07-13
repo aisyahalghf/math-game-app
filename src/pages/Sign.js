@@ -42,7 +42,6 @@ const Sign = () => {
       const randomNumb = Math.round(Math.random() * 10);
       let timerInterval;
       let avatar = avatarImage[randomNumb];
-
       const ref = await addDoc(collection(db, "user"), {
         name: username,
         avatar,

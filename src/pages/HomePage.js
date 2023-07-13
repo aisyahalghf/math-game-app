@@ -12,79 +12,87 @@ import {
 import { useEffect, useState } from "react";
 import { db } from "../firebase";
 import Swal from "sweetalert2";
+import Avatar from "@mui/material/Avatar";
 
-const HomePages = ({ dataUser }) => {
+const HomePages = ({ dataUser, getUser }) => {
   const [leaderBoard, setLeaderBoard] = useState([]);
-
-  let level = dataUser?.level;
   const getLeaderBoard = async () => {
-    const userRef = collection(db, "user");
-    const querySnapshot = await getDocs(
-      query(
-        userRef,
-        where("level", "==", level),
-        orderBy("score", "desc"),
-        limit(5)
-      )
-    );
-    const dataLeaderBoard = querySnapshot.docs.map((doc) => doc.data());
-    setLeaderBoard(dataLeaderBoard);
+    try {
+      let level = dataUser?.level;
+      if (!level) level = "easy";
+      const userRef = collection(db, "user");
+      const querySnapshot = await getDocs(
+        query(
+          userRef,
+          where("level", "==", level),
+          orderBy("score", "desc"),
+          limit(5)
+        )
+      );
+      const dataLeaderBoard = querySnapshot.docs.map((doc) => doc.data());
+      setLeaderBoard(dataLeaderBoard);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  console.log(leaderBoard);
-
-  useEffect(() => {
-    if (dataUser?.level) {
-      getLeaderBoard();
-    } else {
-      // level = "easy";
-      // getLeaderBoard();
-    }
-  }, [dataUser, level]);
-
   const scorers = () => {
-    let color;
     return leaderBoard.map((val, idx) => {
       let name = dataUser.name;
       let ava = dataUser.avatar;
       let score = dataUser.score;
-
-      if (val?.name === name && val?.score === score && val.avatar === ava) {
-        color = "text-red-600";
-      } else {
-        color = "text-white";
-      }
       return (
-        <div key={idx.toLocaleString()} className={color}>
+        <div
+          key={idx.toLocaleString()}
+          className={
+            val?.name === name && val?.score === score && val.avatar === ava
+              ? "text-red-600"
+              : "text-white"
+          }
+        >
           <div className=" flex justify-between px-2 rounded-lg items-center shadow shadow-[#D9D9D9]  ">
             <div className=" flex  items-center gap-2 ">
-              {idx <= 2 ? (
-                <Icon
-                  icon="game-icons:laurels-trophy"
-                  className={
-                    idx === 0
-                      ? "text-3xl text-yellow-600"
-                      : idx === 1
-                      ? "text-3xl text-gray-500"
-                      : "text-3xl text-white"
-                  }
-                />
-              ) : (
-                <img src={val?.avatar} width={"32px"} alt="" />
-              )}
+              <Avatar alt="" src={val?.avatar} sx={{ width: 40, height: 40 }} />
               <div>
                 <h1 className=" text-lg font-bold  ">{val.name}</h1>
                 <h2 className=" text-sm italic">{val.score} Point</h2>
               </div>
             </div>
-            <h2 className=" text-lg font-bold  ">
-              {idx + 1} <sup>th</sup>
-            </h2>
+            <div className=" flex  items-center gap-2 ">
+              <Icon
+                hidden={idx !== 0}
+                icon="game-icons:laurels-trophy"
+                className="text-3xl text-yellow-600"
+              />
+              <Icon
+                icon="ant-design:trophy-twotone"
+                hidden={idx !== 1}
+                className="text-3xl text-gray-300"
+              />
+
+              <Icon
+                icon="mdi:badge"
+                hidden={idx !== 2}
+                className="text-3xl text-gray-500"
+              />
+              <h2 className=" text-lg font-bold  ">
+                {idx + 1} <sup>th</sup>
+              </h2>
+            </div>
           </div>
         </div>
       );
     });
   };
+
+  useEffect(() => {
+    getLeaderBoard();
+  }, [dataUser?.level]);
+
+  useEffect(() => {
+    getUser();
+  }, []);
+  console.log(dataUser?.name);
 
   const handleMyScore = () => {
     Swal.fire({
@@ -117,7 +125,7 @@ const HomePages = ({ dataUser }) => {
                 </button>
               </Link>
               <button
-                hidden={!dataUser?.name}
+                hidden={!dataUser?.name || !dataUser?.score}
                 onClick={handleMyScore}
                 className=" border-2 border-[#D9D9D9] px-2 rounded-lg py-1 hover:bg-[#D9D9D9] hover:text-[#173B3A]"
               >

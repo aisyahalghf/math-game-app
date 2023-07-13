@@ -9,7 +9,6 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
 const Navbar = ({ score, level, generateLevel, dataUser }) => {
-  console.log(dataUser);
   const navigate = useNavigate();
 
   const handleExit = () => {

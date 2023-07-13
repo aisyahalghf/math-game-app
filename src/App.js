@@ -8,28 +8,34 @@ import { db } from "./firebase";
 
 function App() {
   const [dataUser, setDataUser] = useState("");
-
   let id = localStorage.getItem("my_Token");
-
+  console.log(id);
   const getUser = async () => {
-    const snap = await getDoc(doc(db, "user", id));
-    if (snap?.exists()) {
-      setDataUser(snap?.data());
-    } else {
-      console.log("No such document");
+    try {
+      if (id) {
+        const snap = await getDoc(doc(db, "user", id));
+        if (snap?.exists()) {
+          setDataUser(snap?.data());
+        } else {
+          console.log("No such document");
+        }
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
   useEffect(() => {
-    if (id) {
-      getUser();
-    }
+    getUser();
   }, [id]);
 
   return (
     <div>
       <Routes>
-        <Route path="/" element={<HomePages dataUser={dataUser} />} />
+        <Route
+          path="/"
+          element={<HomePages dataUser={dataUser} getUser={getUser} />}
+        />
         <Route path="/sign" element={<Sign />} />
         <Route path="/quiz" element={<QuestionPage dataUser={dataUser} />} />
       </Routes>
