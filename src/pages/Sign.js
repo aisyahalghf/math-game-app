@@ -3,7 +3,6 @@ import Button from "@mui/material/Button";
 import { useEffect, useState } from "react";
 import BackgroundPageWhite from "../componen/BackgroundPageWhite";
 import Swal from "sweetalert2";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
@@ -124,6 +123,7 @@ const Sign = ({ getUser, dataUser }) => {
     if (id || dataUser?.name) {
       navigate("/");
     }
+    // eslint-disable-next-line
   }, []);
 
   return (
