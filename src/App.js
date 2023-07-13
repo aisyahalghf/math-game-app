@@ -2,23 +2,64 @@ import HomePages from "./pages/HomePage";
 import { useEffect, useState } from "react";
 import Sign from "./pages/Sign";
 import QuestionPage from "./pages/QuestionPage";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate, Outlet } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
+import {
+  getDocs,
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+} from "firebase/firestore";
 
 function App() {
-  const [dataUser, setDataUser] = useState("");
+  const [dataUsers, setDataUsers] = useState("");
+  const [dataLeaderBoard, setDataLeaderBoard] = useState([]);
+
   let id = localStorage.getItem("my_Token");
-  console.log(id);
   const getUser = async () => {
     try {
+      const userRef = collection(db, "user");
       if (id) {
         const snap = await getDoc(doc(db, "user", id));
         if (snap?.exists()) {
-          setDataUser(snap?.data());
+          setDataUsers(snap?.data());
+          const dataUser = snap?.data();
+          const querySnapshot = await getDocs(
+            query(
+              userRef,
+              where("level", "==", dataUser?.level),
+              orderBy("score", "desc"),
+              limit(5)
+            )
+          );
+          const datas = querySnapshot.docs.map((doc) => doc.data());
+          setDataLeaderBoard(datas);
         } else {
-          console.log("No such document");
+          const querySnapshot = await getDocs(
+            query(
+              userRef,
+              where("level", "==", "easy"),
+              orderBy("score", "desc"),
+              limit(5)
+            )
+          );
+          const datas = querySnapshot.docs.map((doc) => doc.data());
+          setDataLeaderBoard(datas);
         }
+      } else {
+        const querySnapshot = await getDocs(
+          query(
+            userRef,
+            where("level", "==", "easy"),
+            orderBy("score", "desc"),
+            limit(5)
+          )
+        );
+        const datas = querySnapshot.docs.map((doc) => doc.data());
+        setDataLeaderBoard(datas);
       }
     } catch (error) {
       console.log(error);
@@ -27,17 +68,30 @@ function App() {
 
   useEffect(() => {
     getUser();
-  }, [id]);
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <div>
       <Routes>
         <Route
           path="/"
-          element={<HomePages dataUser={dataUser} getUser={getUser} />}
+          element={
+            <HomePages
+              dataUser={dataUsers}
+              dataLeaderBoard={dataLeaderBoard}
+              getUser={getUser}
+            />
+          }
         />
-        <Route path="/sign" element={<Sign />} />
-        <Route path="/quiz" element={<QuestionPage dataUser={dataUser} />} />
+        <Route
+          path="/sign"
+          element={<Sign getUser={getUser} dataUser={dataUsers} />}
+        />
+        <Route
+          path="/quiz"
+          element={<QuestionPage dataUser={dataUsers} getUser={getUser} />}
+        />
       </Routes>
     </div>
   );

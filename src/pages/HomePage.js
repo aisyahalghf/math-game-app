@@ -1,46 +1,21 @@
 import { Icon } from "@iconify/react";
 import BackgroundPage from "../componen/BackgroundPage";
 import { Link } from "react-router-dom";
-import {
-  getDocs,
-  collection,
-  query,
-  where,
-  orderBy,
-  limit,
-} from "firebase/firestore";
-import { useEffect, useState } from "react";
-import { db } from "../firebase";
 import Swal from "sweetalert2";
 import Avatar from "@mui/material/Avatar";
+import { useEffect } from "react";
 
-const HomePages = ({ dataUser, getUser }) => {
-  const [leaderBoard, setLeaderBoard] = useState([]);
-  const getLeaderBoard = async () => {
-    try {
-      let level = dataUser?.level;
-      if (!level) level = "easy";
-      const userRef = collection(db, "user");
-      const querySnapshot = await getDocs(
-        query(
-          userRef,
-          where("level", "==", level),
-          orderBy("score", "desc"),
-          limit(5)
-        )
-      );
-      const dataLeaderBoard = querySnapshot.docs.map((doc) => doc.data());
-      setLeaderBoard(dataLeaderBoard);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+const HomePages = ({ dataLeaderBoard, dataUser, getUser }) => {
+  useEffect(() => {
+    getUser();
+    // eslint-disable-next-line
+  }, []);
 
   const scorers = () => {
-    return leaderBoard.map((val, idx) => {
-      let name = dataUser.name;
-      let ava = dataUser.avatar;
-      let score = dataUser.score;
+    return dataLeaderBoard?.map((val, idx) => {
+      let name = dataUser?.name;
+      let ava = dataUser?.avatar;
+      let score = dataUser?.score;
       return (
         <div
           key={idx.toLocaleString()}
@@ -85,14 +60,7 @@ const HomePages = ({ dataUser, getUser }) => {
     });
   };
 
-  useEffect(() => {
-    getLeaderBoard();
-  }, [dataUser?.level]);
-
-  useEffect(() => {
-    getUser();
-  }, []);
-  console.log(dataUser?.name);
+  console.log(dataUser);
 
   const handleMyScore = () => {
     Swal.fire({

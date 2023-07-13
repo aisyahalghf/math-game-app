@@ -1,14 +1,14 @@
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Swal from "sweetalert2";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Popover from "@mui/material/Popover";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
-const Navbar = ({ score, level, generateLevel, dataUser }) => {
+const Navbar = ({ score, level, generateLevel, dataUser, getUser }) => {
   const navigate = useNavigate();
 
   const handleExit = () => {
@@ -30,6 +30,7 @@ const Navbar = ({ score, level, generateLevel, dataUser }) => {
           score,
           level,
         });
+        getUser();
       }
     });
   };
@@ -43,20 +44,19 @@ const Navbar = ({ score, level, generateLevel, dataUser }) => {
   return (
     <nav className=" bg-[#D9D9D9] shadow shadow-slate-200  px-3 md:px-0 sticky top-0 z-50 w-full ">
       <div className=" container mx-auto flex justify-between items-center h-20   ">
-        <Link to="/">
-          <Tooltip title={dataUser?.name}>
-            <div className=" flex flex-col items-center gap-">
-              <Avatar
-                alt=""
-                src={dataUser?.avatar}
-                sx={{ width: 56, height: 56 }}
-              />
-              <h1 className="  md:visible  font-extrabold text-xs text-[#173B3A] italic ">
-                {level} Levels
-              </h1>
-            </div>
-          </Tooltip>
-        </Link>
+        <Tooltip title={dataUser?.name}>
+          <div className=" flex flex-col items-center gap-">
+            <Avatar
+              alt=""
+              src={dataUser?.avatar}
+              sx={{ width: 56, height: 56 }}
+            />
+            <h1 className="  md:visible  font-extrabold text-xs text-[#173B3A] italic ">
+              {level} Levels
+            </h1>
+          </div>
+        </Tooltip>
+
         <div className=" flex items-center gap-6 text-[#173B3A] ">
           <div className=" flex items-center gap-3 md:gap-5 ">
             <div className=" flex flex-col justify-center items-start gap-1 ">

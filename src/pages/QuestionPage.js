@@ -8,7 +8,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 const MAX_QUESTION = 10;
 
-const QuestionPage = ({ dataUser }) => {
+const QuestionPage = ({ dataUser, getUser }) => {
   const [question, setQuestion] = useState({
     numb1: 0,
     numb2: 0,
@@ -22,7 +22,7 @@ const QuestionPage = ({ dataUser }) => {
     rightAnswer: "",
   });
   const [score, setScore] = useState(0);
-  const [level, setLevel] = useState("");
+  const [level, setLevel] = useState("easy");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -52,6 +52,7 @@ const QuestionPage = ({ dataUser }) => {
             score: userScore.length,
             level,
           });
+          getUser();
         }
       });
     } else {
@@ -119,6 +120,10 @@ const QuestionPage = ({ dataUser }) => {
 
   useEffect(() => {
     generateLevel();
+    if (!dataUser?.name) {
+      console.log("haloo");
+      navigate("/");
+    }
   }, []);
 
   return (
@@ -128,6 +133,7 @@ const QuestionPage = ({ dataUser }) => {
         level={level}
         generateLevel={generateLevel}
         dataUser={dataUser}
+        getUser={getUser}
       />
       <section className="relative ">
         <BackgroundPage />

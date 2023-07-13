@@ -1,6 +1,6 @@
 import { TextField } from "@mui/material";
 import Button from "@mui/material/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BackgroundPageWhite from "../componen/BackgroundPageWhite";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
@@ -10,9 +10,10 @@ import { useTheme } from "@mui/material/styles";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
-const Sign = () => {
+const Sign = ({ getUser, dataUser }) => {
   const [username, setUsername] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -39,15 +40,19 @@ const Sign = () => {
 
   const handlePlayGame = async () => {
     try {
+      setLoading(true);
       const randomNumb = Math.round(Math.random() * 10);
       let timerInterval;
       let avatar = avatarImage[randomNumb];
       const ref = await addDoc(collection(db, "user"), {
         name: username,
         avatar,
+        level: "easy",
+        score: 0,
       });
       let id = ref?.id;
       localStorage.setItem("my_Token", id);
+      setLoading(false);
 
       Swal.fire({
         title: "Please wait...",
@@ -87,6 +92,7 @@ const Sign = () => {
         }
       });
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
@@ -108,6 +114,18 @@ const Sign = () => {
     }
   };
 
+  const handleBack = () => {
+    getUser();
+    navigate("/");
+  };
+
+  useEffect(() => {
+    const id = localStorage.getItem("my_Token");
+    if (id || dataUser?.name) {
+      navigate("/");
+    }
+  }, []);
+
   return (
     <section className="relative bg-[white] h-screen md:h-screen flex justify-center items-center">
       <BackgroundPageWhite />
@@ -126,17 +144,21 @@ const Sign = () => {
           />
         </div>
         <div className="mt-2 flex justify-center gap-2">
-          <Link to={"/"}>
-            <Button variant="contained" color="error" size="large">
-              Back
-            </Button>
-          </Link>
+          <Button
+            onClick={handleBack}
+            variant="contained"
+            color="error"
+            size="large"
+          >
+            Back
+          </Button>
+
           <Button
             variant="contained"
             color="success"
             size="large"
             onClick={handlePlayGame}
-            disabled={errorMessage || !username}
+            disabled={errorMessage || !username || loading}
           >
             Play Game
           </Button>
