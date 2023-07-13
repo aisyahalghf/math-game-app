@@ -9,7 +9,7 @@ const HomePages = ({ dataLeaderBoard, dataUser, getUser }) => {
   useEffect(() => {
     getUser();
     // eslint-disable-next-line
-  }, []);
+  }, [dataUser?.score]);
 
   const scorers = () => {
     return dataLeaderBoard?.map((val, idx) => {
@@ -60,8 +60,6 @@ const HomePages = ({ dataLeaderBoard, dataUser, getUser }) => {
     });
   };
 
-  console.log(dataUser);
-
   const handleMyScore = () => {
     Swal.fire({
       title: `You are the best ${dataUser?.name}!! `,
@@ -93,7 +91,7 @@ const HomePages = ({ dataLeaderBoard, dataUser, getUser }) => {
                 </button>
               </Link>
               <button
-                hidden={!dataUser?.name || !dataUser?.score}
+                hidden={!dataUser?.name}
                 onClick={handleMyScore}
                 className=" border-2 border-[#D9D9D9] px-2 rounded-lg py-1 hover:bg-[#D9D9D9] hover:text-[#173B3A]"
               >

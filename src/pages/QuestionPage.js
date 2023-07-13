@@ -121,9 +121,9 @@ const QuestionPage = ({ dataUser, getUser }) => {
   useEffect(() => {
     generateLevel();
     if (!dataUser?.name) {
-      console.log("haloo");
       navigate("/");
     }
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -156,6 +156,7 @@ const QuestionPage = ({ dataUser, getUser }) => {
                 onChange={handleAnswerQuestion}
               />
             </div>
+
             <div className=" flex justify-center ">
               <button
                 className=" text-2xl border rounded-lg w-fit px-5 py-1 hover:bg-[#D9D9D9] hover:text-[#173B3A] "

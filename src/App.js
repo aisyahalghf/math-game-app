@@ -2,7 +2,7 @@ import HomePages from "./pages/HomePage";
 import { useEffect, useState } from "react";
 import Sign from "./pages/Sign";
 import QuestionPage from "./pages/QuestionPage";
-import { Route, Routes, Navigate, Outlet } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
 import {

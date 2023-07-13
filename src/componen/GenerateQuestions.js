@@ -1,7 +1,6 @@
 const operands = [":", "-", "x", "+"];
 
 const generateQuestions = (level) => {
-  console.log(level);
   let lev = 0;
   if (level === "easy") {
     lev = 10;
@@ -35,9 +34,7 @@ const generateQuestions = (level) => {
       result = numb1 / numb2;
       do {
         numb1 = Math.round(Math.random() * lev);
-        console.log(numb1);
         numb2 = Math.round(Math.random() * lev);
-        console.log(numb2);
         result = numb1 / numb2;
       } while (Math.abs(Math.floor(result)) !== result || numb2 === 0);
       break;

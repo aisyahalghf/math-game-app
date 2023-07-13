@@ -8,7 +8,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
-const Navbar = ({ score, level, generateLevel, dataUser, getUser }) => {
+const Navbar = ({ score, level, generateLevel, dataUser }) => {
   const navigate = useNavigate();
 
   const handleExit = () => {
@@ -30,7 +30,6 @@ const Navbar = ({ score, level, generateLevel, dataUser, getUser }) => {
           score,
           level,
         });
-        getUser();
       }
     });
   };
