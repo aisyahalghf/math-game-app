@@ -1,7 +1,15 @@
 const operands = [":", "-", "x", "+"];
 
 const generateQuestions = (level) => {
-  const lev = Number(level);
+  console.log(level);
+  let lev = 0;
+  if (level === "easy") {
+    lev = 10;
+  } else if (level === "medium") {
+    lev = 30;
+  } else if (lev === "hard") {
+    lev = 40;
+  }
   let numb1 = Math.round(Math.random() * lev);
   let numb2 = Math.round(Math.random() * lev);
   const op = Math.round(Math.random() * 3);

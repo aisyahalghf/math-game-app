@@ -1,12 +1,15 @@
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import Popover from "@mui/material/Popover";
 import SettingsIcon from "@mui/icons-material/Settings";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
-const Navbar = ({ score, level, generateLevel }) => {
+const Navbar = ({ score, level, generateLevel, dataUser }) => {
+  console.log(dataUser);
   const navigate = useNavigate();
 
   const handleExit = () => {
@@ -22,18 +25,14 @@ const Navbar = ({ score, level, generateLevel }) => {
       if (result.isConfirmed) {
         Swal.fire("Good Job", `Your Score is ${score} .`, "success");
         navigate("/");
+        const id = localStorage.getItem("my_Token");
+        const colectionDb = doc(db, "user", id);
+        updateDoc(colectionDb, {
+          score,
+          level,
+        });
       }
     });
-  };
-
-  const gameLevel = () => {
-    if (level === 10) {
-      return "Easy Levels";
-    } else if (level === 30) {
-      return "Medium Levels";
-    } else if (level === 40) {
-      return "Hard Levels";
-    }
   };
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -45,23 +44,25 @@ const Navbar = ({ score, level, generateLevel }) => {
   return (
     <nav className=" bg-[#D9D9D9] shadow shadow-slate-200  px-3 md:px-0 sticky top-0 z-50 w-full ">
       <div className=" container mx-auto flex justify-between items-center h-20   ">
-        <Tooltip title="aisyah">
-          <div className=" flex flex-col items-center gap-">
-            <Avatar
-              alt=""
-              src="https://drive.google.com/uc?export=view&id=1VskeQmRz1I9W_7qkbi6i6HJUr7V0nH1e"
-              sx={{ width: 56, height: 56 }}
-            />
-            <h1 className=" hidden md:visible  font-extrabold text-xs text-[#173B3A] italic ">
-              {gameLevel()}
-            </h1>
-          </div>
-        </Tooltip>
+        <Link to="/">
+          <Tooltip title={dataUser?.name}>
+            <div className=" flex flex-col items-center gap-">
+              <Avatar
+                alt=""
+                src={dataUser?.avatar}
+                sx={{ width: 56, height: 56 }}
+              />
+              <h1 className="  md:visible  font-extrabold text-xs text-[#173B3A] italic ">
+                {level} Levels
+              </h1>
+            </div>
+          </Tooltip>
+        </Link>
         <div className=" flex items-center gap-6 text-[#173B3A] ">
           <div className=" flex items-center gap-3 md:gap-5 ">
             <div className=" flex flex-col justify-center items-start gap-1 ">
               <h1 className=" visible md:hidden font-extrabold text-sm text-[#173B3A] md:italic ">
-                {gameLevel()}
+                {level} Levels
               </h1>
               <h2 className=" md:italic font-extrabold text-xs md:text-lg ">
                 My Score : {score}

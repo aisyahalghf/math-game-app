@@ -7,6 +7,8 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 const Sign = () => {
   const [username, setUsername] = useState("");
@@ -38,9 +40,17 @@ const Sign = () => {
   const handlePlayGame = async () => {
     try {
       const randomNumb = Math.round(Math.random() * 10);
-      console.log(randomNumb);
       let timerInterval;
-      await Swal.fire({
+      let avatar = avatarImage[randomNumb];
+
+      const ref = await addDoc(collection(db, "user"), {
+        name: username,
+        avatar,
+      });
+      let id = ref?.id;
+      localStorage.setItem("my_Token", id);
+
+      Swal.fire({
         title: "Please wait...",
         html: "your account wiil create after <b></b> milliseconds.",
         timer: 2000,
@@ -60,7 +70,7 @@ const Sign = () => {
           Swal.fire({
             title: `Hooray! `,
             text: "Your account has been created",
-            imageUrl: `${avatarImage[randomNumb]}`,
+            imageUrl: avatar,
             confirmButtonColor: "#173B3A",
             imageWidth: 200,
             imageHeight: 200,
@@ -84,7 +94,6 @@ const Sign = () => {
 
   const handleValidate = () => {
     const pattern = /^(?=.*[^\s])[a-zA-Z0-9\s]+$/;
-
     if (!pattern.test(username)) {
       setErrorMessage("Invalid username");
     } else {

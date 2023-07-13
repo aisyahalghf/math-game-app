@@ -4,9 +4,11 @@ import Navbar from "../componen/Navbar";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import generateQuestion from "../componen/GenerateQuestions";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase";
 const MAX_QUESTION = 10;
 
-const QuestionPage = () => {
+const QuestionPage = ({ dataUser }) => {
   const [question, setQuestion] = useState({
     numb1: 0,
     numb2: 0,
@@ -20,7 +22,7 @@ const QuestionPage = () => {
     rightAnswer: "",
   });
   const [score, setScore] = useState(0);
-  const [level, setLevel] = useState(10);
+  const [level, setLevel] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,10 +46,16 @@ const QuestionPage = () => {
           setIsCorrectsAnswer({});
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           navigate("/");
+          const id = localStorage.getItem("my_Token");
+          const colectionDb = doc(db, "user", id);
+          updateDoc(colectionDb, {
+            score: userScore.length,
+            level,
+          });
         }
       });
     } else {
-      if (level > 0) {
+      if (level) {
         let result = generateQuestion(level);
         setQuestion({
           numb1: result.numb1,
@@ -88,11 +96,11 @@ const QuestionPage = () => {
       denyButtonText: "Medium",
     }).then((result) => {
       if (result.isConfirmed) {
-        setLevel(40);
+        setLevel("hard");
       } else if (result.isDenied) {
-        setLevel(30);
+        setLevel("medium");
       } else if (result.isDismissed) {
-        setLevel(10);
+        setLevel("easy");
       }
     });
   };
@@ -103,7 +111,12 @@ const QuestionPage = () => {
 
   return (
     <div className=" h-screen md:h-screen">
-      <Navbar score={score} level={level} generateLevel={generateLevel} />
+      <Navbar
+        score={score}
+        level={level}
+        generateLevel={generateLevel}
+        dataUser={dataUser}
+      />
       <section className="relative ">
         <BackgroundPage />
         <div className="relative container mx-auto text-[#D9D9D9] flex justify-center  items-start pt-28 md:pt-0 md:items-center h-screen ">
